@@ -1,0 +1,49 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F25CBCED-0210-4143-BB29-730021196D65}|MDP\\MDP.csproj|d:\\uni - 2\\ai - nadimi\\mdp\\blazor mdp\\new\\mdp\\mdp\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F25CBCED-0210-4143-BB29-730021196D65}|MDP\\MDP.csproj|solutionrelative:mdp\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Home.razor",
+              "DocumentMoniker": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\MDP\\Components\\Pages\\Home.razor",
+              "RelativeDocumentMoniker": "MDP\\Components\\Pages\\Home.razor",
+              "ToolTip": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\MDP\\Components\\Pages\\Home.razor",
+              "RelativeToolTip": "MDP\\Components\\Pages\\Home.razor",
+              "ViewState": "AgIAAJkBAAAAAAAAAAAAAJ4BAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-01-10T08:50:32.339Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

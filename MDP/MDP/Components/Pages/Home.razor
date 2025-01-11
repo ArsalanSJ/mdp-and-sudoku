@@ -1,0 +1,730 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using System;
+@using System.Collections.Generic;
+
+<h5>MDP Value Iteration</h5>
+<h2>Final Policy (Value Iteration):</h2>
+<div>
+    @if (policy != null)
+    {
+        <table class="table">
+            @for (int r = 0; r < MDPGrid.rows; r++)
+            {
+                <tr>
+                    @for (int c = 0; c < MDPGrid.cols; c++)
+                    {
+                        var state = new Node(r, c);
+                        if (MDPGrid.grid[r, c] == null)
+                        {
+                            <td style="padding: 10px; border: 1px solid black;">WALL</td>
+                        }
+                        else
+                        {
+                            <td style="padding: 10px; border: 1px solid black;">
+                                @policy.GetValueOrDefault(state, "END"),
+                                @value.GetValueOrDefault(state).ToString("F2")
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>Calculating (Value Iteration)...</p>
+    }
+
+    <button @onclick="Previous" class="button">Previous</button>
+    <button @onclick="Next" class="button">Next</button>
+    <div>Iteration: @show</div>
+</div>
+
+<hr />
+
+<h5>MDP Policy Iteration</h5>
+<h2>Final Policy (Policy Iteration):</h2>
+<div>
+    @if (policyIterationPolicy != null)
+    {
+        <table class="table">
+            @for (int r = 0; r < MDPGrid.rows; r++)
+            {
+                <tr>
+                    @for (int c = 0; c < MDPGrid.cols; c++)
+                    {
+                        var state = new Node(r, c);
+                        if (MDPGrid.grid[r, c] == null)
+                        {
+                            <td style="padding: 10px; border: 1px solid black;">WALL</td>
+                        }
+                        else
+                        {
+                            <td style="padding: 10px; border: 1px solid black;">
+                                @policyIterationPolicy.GetValueOrDefault(state, "END"),
+                                @policyIterationValue.GetValueOrDefault(state).ToString("F2")
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>Calculating (Policy Iteration)...</p>
+    }
+
+    <button @onclick="PreviousPolicyIteration" class="button">Previous</button>
+    <button @onclick="NextPolicyIteration" class="button">Next</button>
+    <div>Iteration: @showPolicyIteration</div>
+</div>
+
+@code {
+    // --------------------------------------------
+    // 1) VALUE ITERATION FIELDS
+    // --------------------------------------------
+    Dictionary<Node, string> policy;
+    Dictionary<Node, double> value;
+    List<Dictionary<Node, double>> values_list;
+    List<Dictionary<Node, string>> policy_list;
+    private int show = 0;
+
+    // --------------------------------------------
+    // 2) POLICY ITERATION FIELDS
+    // --------------------------------------------
+    Dictionary<Node, string> policyIterationPolicy;
+    Dictionary<Node, double> policyIterationValue;
+    List<Dictionary<Node, double>> policyIterationValuesList;
+    List<Dictionary<Node, string>> policyIterationPolicyList;
+    private int showPolicyIteration = 0;
+
+    // --------------------------------------------
+    // 3) ONINITIALIZED: RUN BOTH ALGORITHMS
+    // --------------------------------------------
+    protected override void OnInitialized()
+    {
+        // Value Iteration
+        (values_list, policy_list) = MDPGrid.ValueIteration(0.9, 1e-4);
+        value = values_list[show];
+        policy = policy_list[show];
+
+        // Policy Iteration
+        (policyIterationValuesList, policyIterationPolicyList) = MDPGrid.PolicyIteration(0.9, 1e-4);
+        policyIterationValue = policyIterationValuesList[showPolicyIteration];
+        policyIterationPolicy = policyIterationPolicyList[showPolicyIteration];
+    }
+
+    // --------------------------------------------
+    // 4) VALUE ITERATION NAVIGATION
+    // --------------------------------------------
+    private void Next()
+    {
+        if (show < values_list.Count - 1)
+        {
+            show++;
+            value = values_list[show];
+            policy = policy_list[show];
+        }
+    }
+
+    private void Previous()
+    {
+        if (show > 0)
+        {
+            show--;
+            value = values_list[show];
+            policy = policy_list[show];
+        }
+    }
+
+    // --------------------------------------------
+    // 5) POLICY ITERATION NAVIGATION
+    // --------------------------------------------
+    private void NextPolicyIteration()
+    {
+        if (showPolicyIteration < policyIterationValuesList.Count - 1)
+        {
+            showPolicyIteration++;
+            policyIterationValue = policyIterationValuesList[showPolicyIteration];
+            policyIterationPolicy = policyIterationPolicyList[showPolicyIteration];
+        }
+    }
+
+    private void PreviousPolicyIteration()
+    {
+        if (showPolicyIteration > 0)
+        {
+            showPolicyIteration--;
+            policyIterationValue = policyIterationValuesList[showPolicyIteration];
+            policyIterationPolicy = policyIterationPolicyList[showPolicyIteration];
+        }
+    }
+
+    // --------------------------------------------
+    // 6) NODE CLASS
+    // --------------------------------------------
+    public class Node
+    {
+        public int row { get; set; }
+        public int col { get; set; }
+
+        public Node(int row, int col)
+        {
+            this.row = row;
+            this.col = col;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Node other && row == other.row && col == other.col;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(row, col);
+        }
+    }
+
+    // --------------------------------------------
+    // 7) MDP GRID + ALGORITHMS
+    // --------------------------------------------
+    public static class MDPGrid
+    {
+        public static readonly double?[,] grid = {
+            { 0,    0,    0,   10 },
+            { 0,  null,   0,  -10 },
+            { 0,    0,    0,    0 },
+    };
+
+        public static readonly int rows = grid.GetLength(0);
+        public static readonly int cols = grid.GetLength(1);
+
+        static readonly string[] actions = { "N", "S", "E", "W" };
+
+        // Probability distributions for "intendedAction"
+        static readonly Dictionary<string, Dictionary<string, double>> actionProbs = new()
+        {
+            { "N", new() { { "N", 0.8 }, { "E", 0.1 }, { "W", 0.1 } } },
+            { "S", new() { { "S", 0.8 }, { "E", 0.1 }, { "W", 0.1 } } },
+            { "E", new() { { "E", 0.8 }, { "N", 0.1 }, { "S", 0.1 } } },
+            { "W", new() { { "W", 0.8 }, { "N", 0.1 }, { "S", 0.1 } } }
+        };
+
+        // -----------------------------
+        // Helpers
+        // -----------------------------
+        static Node GetNextState(Node s, string action)
+        {
+            int nr = s.row;
+            int nc = s.col;
+
+            if (action == "N") nr--;
+            if (action == "S") nr++;
+            if (action == "E") nc++;
+            if (action == "W") nc--;
+
+            // If out of bounds or wall => remain in same state
+            if (nr < 0 || nr >= rows || nc < 0 || nc >= cols || grid[nr, nc] == null)
+                return s;
+
+            return new Node(nr, nc);
+        }
+
+        static List<(double prob, Node state)> GetTransitions(Node s, string action)
+        {
+            var transitions = new List<(double prob, Node state)>();
+            foreach (var kv in actionProbs[action])
+            {
+                var nextS = GetNextState(s, kv.Key);
+                transitions.Add((kv.Value, nextS));
+            }
+            return transitions;
+        }
+
+        static bool IsTerminal(Node s)
+        {
+            double? r = grid[s.row, s.col];
+            return (r == 10) || (r == -10);
+        }
+
+        // ---------------------------------------------------------
+        // VALUE ITERATION
+        // ---------------------------------------------------------
+        public static (List<Dictionary<Node, double>> values, List<Dictionary<Node, string>> policy)
+            ValueIteration(double gamma, double theta)
+        {
+            var V = new Dictionary<Node, double>();
+            var Pi = new Dictionary<Node, string>();
+
+            // Prepare iteration history
+            var values_list = new List<Dictionary<Node, double>>();
+            var policy_list = new List<Dictionary<Node, string>>();
+
+            // Initialization: set terminal states to their reward, others to 0
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    if (grid[r, c] is not null) // skip walls
+                    {
+                        var s = new Node(r, c);
+                        if (IsTerminal(s))
+                            V[s] = (double)grid[r, c];
+                        else
+                            V[s] = 0.0;
+                    }
+                }
+            }
+
+            bool converged;
+            do
+            {
+                converged = true;
+                var newV = new Dictionary<Node, double>(V);
+
+                foreach (var s in V.Keys)
+                {
+                    if (IsTerminal(s))
+                        continue;
+
+                    double maxVal = double.MinValue;
+                    string bestA = null;
+
+                    foreach (var a in actions)
+                    {
+                        double valA = 0.0;
+                        foreach (var (p, sNext) in GetTransitions(s, a))
+                        {
+                            double reward = grid[sNext.row, sNext.col] ?? 0;
+                            valA += p * (reward + gamma * V[sNext]);
+                        }
+
+                        if (valA > maxVal)
+                        {
+                            maxVal = valA;
+                            bestA = a;
+                        }
+                    }
+
+                    newV[s] = maxVal;
+                    Pi[s] = bestA;
+
+                    if (Math.Abs(maxVal - V[s]) > theta)
+                        converged = false;
+                }
+
+                V = newV;
+                values_list.Add(new Dictionary<Node, double>(V));
+                policy_list.Add(new Dictionary<Node, string>(Pi));
+
+            } while (!converged);
+
+            return (values_list, policy_list);
+        }
+
+        // ---------------------------------------------------------
+        // POLICY ITERATION
+        // ---------------------------------------------------------
+        public static (List<Dictionary<Node, double>> valuesList, List<Dictionary<Node, string>> policyList)
+            PolicyIteration(double gamma, double theta)
+        {
+            // 1) Initialize
+            var Pi = new Dictionary<Node, string>();
+            var V = new Dictionary<Node, double>();
+
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    // Skip walls
+                    if (grid[r, c] != null)
+                    {
+                        var s = new Node(r, c);
+                        // Terminal => value = reward, no action in policy
+                        if (IsTerminal(s))
+                        {
+                            V[s] = (double)grid[r, c];
+                        }
+                        else
+                        {
+                            // Non-terminal => init arbitrary action, value=0
+                            Pi[s] = actions[0]; // e.g. "N"
+                            V[s] = 0.0;
+                        }
+                    }
+                }
+            }
+
+            var valuesList = new List<Dictionary<Node, double>>();
+            var policyList = new List<Dictionary<Node, string>>();
+
+            bool policyStable;
+            do
+            {
+                // 2) Policy Evaluation
+                PolicyEvaluation(Pi, V, gamma, theta);
+
+                // Keep a snapshot
+                valuesList.Add(new Dictionary<Node, double>(V));
+                policyList.Add(new Dictionary<Node, string>(Pi));
+
+                // 3) Policy Improvement
+                policyStable = true;
+
+                // Only update states that have a policy (non-terminals)
+                foreach (var s in Pi.Keys)
+                {
+                    string oldAction = Pi[s];
+                    string bestAction = oldAction;
+                    double bestVal = double.MinValue;
+
+                    // Evaluate all actions
+                    foreach (var a in actions)
+                    {
+                        double valA = 0.0;
+                        foreach (var (p, sNext) in GetTransitions(s, a))
+                        {
+                            double reward = grid[sNext.row, sNext.col] ?? 0;
+                            valA += p * (reward + gamma * V[sNext]);
+                        }
+
+                        if (valA > bestVal)
+                        {
+                            bestVal = valA;
+                            bestAction = a;
+                        }
+                    }
+
+                    // Update if improved
+                    if (bestAction != oldAction)
+                    {
+                        Pi[s] = bestAction;
+                        policyStable = false;
+                    }
+                }
+
+            } while (!policyStable);
+
+            // One last snapshot
+            valuesList.Add(new Dictionary<Node, double>(V));
+            policyList.Add(new Dictionary<Node, string>(Pi));
+
+            return (valuesList, policyList);
+        }
+
+        // ---------------------------------------------------------
+        // POLICY EVALUATION HELPER
+        // ---------------------------------------------------------
+        private static void PolicyEvaluation(
+            Dictionary<Node, string> policy,
+            Dictionary<Node, double> V,
+            double gamma,
+            double theta)
+        {
+            while (true)
+            {
+                double delta = 0.0;
+                var newV = new Dictionary<Node, double>(V);
+
+                // Only evaluate states that have a policy => non-terminals
+                foreach (var s in policy.Keys)
+                {
+                    double val = 0.0;
+                    string chosenAction = policy[s];
+                    foreach (var (p, sNext) in GetTransitions(s, chosenAction))
+                    {
+                        double reward = grid[sNext.row, sNext.col] ?? 0;
+                        val += p * (reward + gamma * V[sNext]);
+                    }
+
+                    newV[s] = val;
+                    delta = Math.Max(delta, Math.Abs(val - V[s]));
+                }
+
+                V = newV;
+                if (delta < theta)
+                    break;
+            }
+        }
+    }
+}
+
+<style>
+    .button {
+        background-color: #ddd;
+        border: none;
+        color: black;
+        padding: 16px 32px;
+        text-align: center;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition: 0.3s;
+    }
+
+        .button:hover {
+            background-color: #3e8e41;
+            color: white;
+        }
+
+    .table {
+        border-collapse: collapse;
+        margin: 8px 0;
+    }
+
+        .table td {
+            padding: 10px;
+            border: 1px solid black;
+        }
+</style>
+
+
+
+
+
+
+@* @page "/"
+@rendermode InteractiveServer
+@using System;
+@using System.Collections.Generic;
+
+<h5>MDP Value Iteration</h5>
+
+<h2>Final Policy:</h2>
+<div>
+    @if (policy != null)
+    {
+        <table class="table">
+            @for (int r = 0; r < MDPGrid.rows; r++)
+            {
+                <tr>
+                    @for (int c = 0; c < MDPGrid.cols; c++)
+                    {
+                        var state = new Node(r, c);
+                        if (MDPGrid.grid[r, c] == null)
+                        {
+                            <td style="padding: 10px; border: 1px solid black;">WALL</td>
+                        }
+                        else
+                        {
+                            <td style="padding: 10px; border: 1px solid black;">@policy.GetValueOrDefault(state, "END"), @value.GetValueOrDefault(state).ToString("F2")</td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>Calculating...</p>
+    }
+
+    <button @onclick="Previous" class="button">previous</button>
+    <button @onclick="Next" class="button">Next</button>
+    <div>@show</div>
+</div>
+
+@code {
+    Dictionary<Node, string> policy;
+    Dictionary<Node, double> value;
+
+    List<Dictionary<Node, double>> values_list;
+    List<Dictionary<Node, string>> policy_list;
+
+    private int show = 0;
+
+    protected override void OnInitialized()
+    {
+        // Perform Value Iteration on initialization
+        (values_list, policy_list) = MDPGrid.ValueIteration(0.9, 1e-4);
+        value = values_list[show];
+        policy = policy_list[show];
+    }
+
+    private void Next()
+    {
+        if (show < values_list.Count -1)
+        {
+            show++;
+            value = values_list[show];
+            policy = policy_list[show];
+        }
+            
+    }
+
+    private void Previous()
+    {
+        if(show > 0)
+        {
+            show--;
+            value = values_list[show];
+            policy = policy_list[show];
+
+        }
+    }
+
+
+    public class Node
+    {
+        public int row { get; set; }
+        public int col { get; set; }
+
+        public Node(int row, int col)
+        {
+            this.row = row;
+            this.col = col;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Node other && this.row == other.row && this.col == other.col;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(row, col);
+        }
+    }
+
+    public static class MDPGrid
+    {
+        public static readonly double?[,] grid = {
+            { 0, 0, 0, 10 },
+            { 0, null, 0, -10 },
+            { 0, 0, 0, 0 },
+    };
+
+        public static readonly int rows = grid.GetLength(0);
+        public static readonly int cols = grid.GetLength(1);
+
+        static readonly string[] actions = { "N", "S", "E", "W" };
+
+        static readonly Dictionary<string, Dictionary<string, double>> actionProbs = new()
+        {
+            { "N", new() { { "N", 0.8 }, { "E", 0.1 }, { "W", 0.1 } } },
+            { "S", new() { { "S", 0.8 }, { "E", 0.1 }, { "W", 0.1 } } },
+            { "E", new() { { "E", 0.8 }, { "N", 0.1 }, { "S", 0.1 } } },
+            { "W", new() { { "W", 0.8 }, { "N", 0.1 }, { "S", 0.1 } } }
+        };
+
+        static Node GetNextState(Node state, string action)
+        {
+            int newRow = state.row;
+            int newCol = state.col;
+
+            if (action == "N") newRow--;
+            if (action == "S") newRow++;
+            if (action == "E") newCol++;
+            if (action == "W") newCol--;
+
+            if (newRow < 0 || newRow >= rows || newCol < 0 || newCol >= cols || grid[newRow, newCol] == null)
+                return state; // Stay in current state for out-of-bound or wall
+
+            return new Node(newRow, newCol);
+        }
+
+        static List<(double prob, Node state)> GetTransitions(Node state, string action)
+        {
+            var transitions = new List<(double prob, Node state)>();
+
+            foreach (var intendedAction in actionProbs[action])
+            {
+                var nextState = GetNextState(state, intendedAction.Key);
+                transitions.Add((intendedAction.Value, nextState));
+            }
+
+            return transitions;
+        }
+
+        static bool IsTerminal(Node state)
+        {
+            double? reward = grid[state.row, state.col];
+            return reward == 10 || reward == -10;
+        }
+
+        public static (List<Dictionary<Node, double>> values, List<Dictionary<Node, string>> policy) ValueIteration(double gamma, double theta)
+        {
+            var values = new Dictionary<Node, double>();
+            var policy = new Dictionary<Node, string>();
+
+            List<Dictionary<Node, double>> values_list = new List<Dictionary<Node, double>>();
+            List<Dictionary<Node, string>> policy_list = new List<Dictionary<Node, string>>();
+
+            // Initialize values for all valid states
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    if (grid[r, c] != null) // Skip walls
+                        values[new Node(r, c)] = 0.0;
+                }
+            }
+
+            bool converged;
+
+            do
+            {
+                converged = true;
+                var newValues = new Dictionary<Node, double>(values);
+
+                foreach (var state in values.Keys)
+                {
+                    if (IsTerminal(state))
+                        continue;
+
+                    double maxValue = double.MinValue;
+                    string bestAction = null;
+
+                    foreach (var action in actions)
+                    {
+                        double value = 0;
+
+                        foreach (var (prob, nextState) in GetTransitions(state, action))
+                        {
+                            double reward = grid[nextState.row, nextState.col] ?? 0;
+                            value += prob * (reward + gamma * values[nextState]);
+                        }
+
+                        if (value > maxValue)
+                        {
+                            maxValue = value;
+                            bestAction = action;
+                        }
+                    }
+
+                    newValues[state] = maxValue;
+                    policy[state] = bestAction;
+
+                    if (Math.Abs(values[state] - newValues[state]) > theta)
+                        converged = false;
+                }
+
+                values = newValues;
+                values_list.Add(newValues);
+                policy_list.Add(policy);
+
+            } while (!converged);
+
+            return (values_list, policy_list);
+        }
+    }
+}
+
+<style>
+    .button {
+        background-color: #ddd;
+        border: none;
+        color: black;
+        padding: 16px 32px;
+        text-align: center;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition: 0.3s;
+    }
+
+        .button:hover {
+            background-color: #3e8e41;
+            color: white;
+        }
+</style> *@
