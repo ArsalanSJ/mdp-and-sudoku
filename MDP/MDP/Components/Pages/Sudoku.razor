@@ -1,0 +1,122 @@
+﻿@page "/Sudoku"
+@rendermode InteractiveServer
+
+<PageTitle>Sudoku</PageTitle>
+
+<h1>Sudoku</h1>
+
+<table class="table">
+    @for (int i = 0; i < 9; i++)
+    {
+        <tr class="align-content-center">
+            @for (int j = 0; j < 9; j++)
+            {
+                <td >@sudoku[i][j]</td>
+            }
+        </tr>
+    }
+</table>
+
+<button @onclick="Solve" class="button" >SOLVE</button>
+
+@code {
+    int[][] sudoku = new int[][]
+    {
+        new int[] {0, 0, 0, 0, 0, 8, 0, 0, 1},
+        new int[] {0, 5, 0, 0, 0, 0, 0, 0, 0},
+        new int[] {3, 0, 0, 0, 0, 0, 0, 0, 0},
+        new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        new int[] {0, 6, 0, 0, 0, 0, 0, 8, 0},
+        new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        new int[] {4, 0, 0, 0, 0, 0, 0, 0, 0},
+        new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        new int[] {0, 0, 0, 0, 0, 3, 0, 0, 0}
+    };
+
+    bool IsValid(int[][] grid, int row, int col, int num)
+    {
+        if (grid[row].Contains(num))
+            return false;
+
+        for (int r = 0; r < 9; r++)
+        {
+            if (grid[r][col] == num)
+                return false;
+        }
+
+        int start_row = 3 * (row / 3);
+        int column_row = 3 * (col / 3);
+
+        for (int r = start_row; r < start_row + 3; r++)
+        {
+            for (int c = column_row; c < column_row + 3; c++)
+            {
+                if (grid[r][c] == num)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool CSP(int[][] grid)
+    {
+        for (int row = 0; row < 9; row++)
+        {
+            for (int col = 0; col < 9; col++)
+            {
+                if (grid[row][col] == 0)
+                {
+                    for (int num = 1; num <= 9; num++)
+                    {
+                        if (IsValid(grid, row, col, num))
+                        {
+                            grid[row][col] = num;
+                            StateHasChanged();
+                            if (CSP(grid))
+                                return true;
+                            grid[row][col] = 0;
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    void Solve()
+    {
+        CSP(sudoku);
+        StateHasChanged();
+    }
+}
+
+<style>
+    .button {
+        background-color: #ddd;
+        border: none;
+        color: black;
+        padding: 16px 32px;
+        text-align: center;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition: 0.3s;
+    }
+
+        .button:hover {
+            background-color: #3e8e41;
+            color: white;
+        }
+
+    .table {
+        border-collapse: collapse;
+        margin: 8px 0;
+    }
+
+        .table td {
+            padding: 10px;
+            border: 1px solid black;
+        }
+</style>

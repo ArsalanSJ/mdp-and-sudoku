@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\MDP\\MDP.csproj",
+      "projectUniqueName": "D:\\UNI - 2\\AI - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\MDP\\MDP\\MDP.csproj",
       "projectName": "MDP",
-      "projectPath": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\MDP\\MDP.csproj",
+      "projectPath": "D:\\UNI - 2\\AI - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\MDP\\MDP\\MDP.csproj",
       "packagesPath": "C:\\Users\\arsal\\.nuget\\packages\\",
-      "outputPath": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\MDP\\obj\\",
+      "outputPath": "D:\\UNI - 2\\AI - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\MDP\\MDP\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

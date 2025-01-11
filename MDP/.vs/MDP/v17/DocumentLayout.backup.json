@@ -1,9 +1,13 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\",
+  "WorkspaceRootPath": "D:\\UNI - 2\\AI - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\MDP\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F25CBCED-0210-4143-BB29-730021196D65}|MDP\\MDP.csproj|d:\\uni - 2\\ai - nadimi\\mdp\\blazor mdp\\new\\mdp\\mdp\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{F25CBCED-0210-4143-BB29-730021196D65}|MDP\\MDP.csproj|d:\\uni - 2\\ai - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\mdp\\mdp\\components\\pages\\sudoku.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F25CBCED-0210-4143-BB29-730021196D65}|MDP\\MDP.csproj|solutionrelative:mdp\\components\\pages\\sudoku.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F25CBCED-0210-4143-BB29-730021196D65}|MDP\\MDP.csproj|d:\\uni - 2\\ai - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\mdp\\mdp\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{F25CBCED-0210-4143-BB29-730021196D65}|MDP\\MDP.csproj|solutionrelative:mdp\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
@@ -31,12 +35,25 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Sudoku.razor",
+              "DocumentMoniker": "D:\\UNI - 2\\AI - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\MDP\\MDP\\Components\\Pages\\Sudoku.razor",
+              "RelativeDocumentMoniker": "MDP\\Components\\Pages\\Sudoku.razor",
+              "ToolTip": "D:\\UNI - 2\\AI - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\MDP\\MDP\\Components\\Pages\\Sudoku.razor*",
+              "RelativeToolTip": "MDP\\Components\\Pages\\Sudoku.razor*",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAgwB8AAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-01-11T10:45:03.757Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Home.razor",
-              "DocumentMoniker": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\MDP\\Components\\Pages\\Home.razor",
+              "DocumentMoniker": "D:\\UNI - 2\\AI - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\MDP\\MDP\\Components\\Pages\\Home.razor",
               "RelativeDocumentMoniker": "MDP\\Components\\Pages\\Home.razor",
-              "ToolTip": "D:\\UNI - 2\\AI - nadimi\\MDP\\blazor MDP\\new\\MDP\\MDP\\Components\\Pages\\Home.razor*",
-              "RelativeToolTip": "MDP\\Components\\Pages\\Home.razor*",
-              "ViewState": "AgIAALwBAAAAAAAAAAAgwOABAAAAAAAAAAAAAA==",
+              "ToolTip": "D:\\UNI - 2\\AI - nadimi\\mdp sudoku\\github\\mdp-and-sudoku-\\MDP\\MDP\\Components\\Pages\\Home.razor",
+              "RelativeToolTip": "MDP\\Components\\Pages\\Home.razor",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAFcAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-01-10T08:50:32.339Z",
               "EditorCaption": ""

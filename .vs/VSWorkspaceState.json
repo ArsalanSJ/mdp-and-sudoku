@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\MDP",
+    "\\MDP\\MDP",
+    "\\MDP\\MDP\\Components",
+    "\\MDP\\MDP\\Components\\Pages"
+  ],
+  "SelectedNode": "\\MDP\\MDP\\Components\\Pages\\Home.razor",
+  "PreviewInSolutionExplorer": false
+}
